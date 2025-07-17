@@ -133,6 +133,152 @@ select empno as 사번, name as 이름, gender as 성별 from emp;
 select empno e, name n, gender g from emp;
 
 
+select SUM(price) as 합계 from sale;
+select count(*) as 직원수 from emp;
+select count(empno) as 직원수 from emp;
+select count(depno) as 부서수 from emp;
+
+select ceil(1.2) from dual; // 올림
+select ceil(1.8) from dual;
+select floor(1.2) from dual; // 내림
+select floor(1.8) from dual;
+select round(1.2) from dual; // 반올림
+select round(1.8) from dual;
+
+select dbms_random.value from dual;
+select ceil(dbms_random.value*10) from dual;
+
+select 'Hello Oracle!', length('Hello Oracle!') from dual;
+select 'Hello Oracle!', substr('Hello Oracle!', 1, 3),
+substr('Hello Oracle!', 3, 2),
+substr('Hello Oracle!', 5)
+from dual;
+
+
+select 
+instr('Hello Oracle!', 'l') as instr_1,
+instr('Hello Oracle!', 'l', -1) as instr_2
+from dual;
+
+select '010-2109-8237', replace('010-2109-8237','-','') from dual;
+select lpad('Oracle', 10, '#') as lpad, rpad('Oracle', 10, '*') as rpad from dual;
+
+select concat (empno, name) from emp where name = '이순신';
+select empno || name from emp where name = '정약용';
+
+select '[ _Oracle_ ]' as before, '[' || trim(' _Oracle_ ') || ']' as trim from dual;
+
+
+select add_months(sysdate, 1),
+add_months(sysdate, -1)
+from dual;
+
+select months_between(date '2025-07-13', date '2024-07-13') as 개월차
+from dual;
+
+select next_day(sysdate, '월요일') as 다음_월요일
+from dual;
+
+-- 실습하기 3-4
+
+select 
+to_char(sysdate, 'yyyy') as yyyy,
+to_char(sysdate, 'mm') as mm,
+to_char(sysdate, 'dd') as dd,
+to_char(sysdate, 'hh24') as hh24,
+to_char(sysdate, 'mi') as mi,
+to_char(sysdate, 'ss') as ss,
+to_char(sysdate, 'yyyy/mm/dd hh24:mi:ss') as 날짜시간
+from dual;
+
+insert into emp values (1011, '안중근', 'M', '부장', 30, to_char(sysdate, 'yyyy/mm/dd'));
+insert into emp values (1012, '이민준', 'M', '사원', 26, to_char(sysdate));
+
+select 
+to_date('20250714', 'yyyy/mm/dd') as 날짜1,
+to_date('250714', 'yy-mm-dd') as 날짜2,
+to_date(sysdate, 'yyyy/mm/dd hh24:mi:ss') as 날짜시간
+from dual;
+
+
+insert into emp values (1013, '유관순', 'F', '차장', 20, sysdate);
+insert into emp values (1014, '윤봉길', 'M', '과장', 30, to_date(sysdate, 'yyyy-mm-dd hh24:mi:ss'));
+
+select no, empno, year, month, nvl(price, 0)
+from sale;
+
+select empno, name, gender, job, nvl2(depno, '정규직', '비정규직')
+from emp;
+
+-- 그룹화
+select empno from sale group by empno;
+select year from sale group by year;
+select empno, year from sale group by empno, year;
+select empno, count(*) as 판매건수 from sale group by empno;
+select empno, sum(price) as 합계 from sale group by empno order by empno;
+select empno, avg(price) as 평균 from sale group by empno order by empno;
+
+select empno, year, sum(price) as 합계 from sale
+group by empno, year
+order by empno, year;
+
+select empno, year, sum(price) as 합계
+from sale
+group by empno, year
+order by year, 합계 desc;
+
+select empno, year, sum(price) as 합계
+from sale
+where price >= 100000
+group by empno, year
+having sum(price) >= 200000
+order by 합계 desc;
+
+-- 실습하기 5-1
+select empno, month, price from sale where year = 2023
+union
+select empno, month, price from sale where year = 2024;
+
+select empno, month, price from sale where year = 2023
+union all
+select empno, month, price from sale where year = 2024;
+
+select empno, year, sum(price) as 합계
+from sale
+where year = 2023
+group by empno, year
+union
+select empno, year, sum(price) as 합계
+from sale
+where year = 2024
+group by empno, year
+order by year asc, 합계 desc;
+
+select * from emp e join dept d on e.depno = d.deptno;
+
+select * from emp e join dept d using (deptno); -- 컬럼명 같아야 함
+
+select * from emp e, dept d where e.depno = d.deptno;
+
+select s.no, s.empno, e.name, e.job, e.regdate, e.depno, d.dname
+from sale s
+join emp e on s.empno = e.empno
+join dept d on e.depno = d.deptno
+where price > 100000 and year = 2024
+order by s.price desc;
+
+delete from emp where empno = 1006;
+
+select * from sale s
+left join emp e on s.empno = e.empno;
+
+select * from sale s
+right join emp e on s.empno = e.empno;
+
+
+
+
+
 
 
 
